@@ -141,43 +141,31 @@ while read ID ParentId name glCode manualEntriesAllowed TypeValue usage descript
 do
 	# Ignore first row (field headers)
 	if [ $INDEX -ne 0 ]; then
+		# Set up request paramters
 		TYPEID=$(getTypeId "$TypeValue")
 		USAGEID=$(getUsageId "$usage")
-		if [ -z $ParentId ]; then
-			# If no parent:
-			RESPONSE=$(curl -s \
-				${URL}"api/v1/glaccounts" \
-				-X POST \
-				-H "Content-Type: application/json" \
-				-H "X-Mifos-Platform-TenantId: $TENANT" \
-				-u ${USERNAME}":"${PASSWORD} \
-				-d "{ \
-				    'name': \"$name\", \
-				    'glCode': \"$glCode\", \
-				    'manualEntriesAllowed': $manualEntriesAllowed, \
-				    'type': $TYPEID, \
-				    'usage': $USAGEID, \
-				    'description': \"$description\" \
-			            }" )
-		else
-			# If there is a parent ID
-			RESPONSE=$(curl -s \
-				${URL}"api/v1/glaccounts" \
-				-X POST \
-				-H "Content-Type: application/json" \
-				-H "X-Mifos-Platform-TenantId: $TENANT" \
-				-u ${USERNAME}":"${PASSWORD} \
-				-d "{ \
-				    'name': \"$name\", \
-				    'glCode': \"$glCode\", \
-				    'manualEntriesAllowed': $manualEntriesAllowed, \
-				    'type': $TYPEID, \
-				    'parentId': ${ACTUALID[$ParentId]}, \
-				    'usage': $USAGEID, \
-				    'description': \"$description\" \
-			            }" )
-			
+		PARENTJSON=""
+		if [ -n "$ParentId" ]; then
+			PARENTJSON="'parentId': ${ACTUALID[$ParentId]},"
 		fi
+		
+		# Make HTTP request
+		RESPONSE=$(curl -s \
+			${URL}"api/v1/glaccounts" \
+			-X POST \
+			-H "Content-Type: application/json" \
+			-H "X-Mifos-Platform-TenantId: $TENANT" \
+			-u ${USERNAME}":"${PASSWORD} \
+			-d "{ \
+			    $PARENTJSON \
+			    'name': \"$name\", \
+			    'glCode': \"$glCode\", \
+			    'manualEntriesAllowed': $manualEntriesAllowed, \
+			    'type': $TYPEID, \
+			    'usage': $USAGEID, \
+			    'description': \"$description\" \
+			    }" )
+
 		# Check the server reponded successfully with {"resourceId":xx}
 		if [[ "$RESPONSE" == *"resourceId"* ]]; then
 			RESOURCEID=$(awk -v RS=[0-9]+ '{print RT+0;exit}' <<< "$RESPONSE")
@@ -192,7 +180,6 @@ do
 		fi
 	fi
 	let INDEX=INDEX+1
-
 done < $FILE
 IFS=$OLDIFS
 
