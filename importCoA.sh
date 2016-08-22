@@ -6,7 +6,7 @@
 # Usage:
 # 
 # ./importCoA.sh -u [MifosUsername] -p [MifosPassword] -t [MifosTenantId] -a [MifosUrl] -f [CSV file]
-# e.g. ./importCoA.sh -u mifos -p password -t default -a https://domain.com:80/mifosng-provider/
+# e.g. ./importCoA.sh -u mifos -p password -t default -a https://domain.com:80/fineract-provider/
 #
 # CSV format
 #	One row of field headers
@@ -154,7 +154,7 @@ do
 			${URL}"api/v1/glaccounts" \
 			-X POST \
 			-H "Content-Type: application/json" \
-			-H "X-Mifos-Platform-TenantId: $TENANT" \
+			-H "Fineract-Platform-TenantId: $TENANT" \
 			-u ${USERNAME}":"${PASSWORD} \
 			-d "{ \
 			    $PARENTJSON \
