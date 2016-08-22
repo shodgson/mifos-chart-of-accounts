@@ -5,7 +5,7 @@ Bash script to import a Mifos X chart of accounts from a CSV file
 ./importCoA.sh -u [MifosUsername] -p [MifosPassword] -t [MifosTenantId] -a [MifosUrl] -f [CSV file]
 Example:
 ````shell
-./importCoA.sh -u mifos -p password -t default -a https://domain.com:80/mifosng-provider/ -f sampleCoA.csv
+./importCoA.sh -u mifos -p password -t default -a https://domain.com:8443/fineract-provider/ -f sampleCoA.csv
 ````
 
 #### CSV format
@@ -26,7 +26,7 @@ Example:
   
 #### Compatibility
 * Linux (tested)
-* Mac (untested)
+* Mac with Bash 4 (untested)
 * Windows with Cygwin (untested)
 
 Author:  Steven Hodgson
